@@ -1,0 +1,15 @@
+# Usage (in .github/workflows/ghostaction.yml of any repo):
+#   on: { workflow_dispatch: {}, schedule: [{ cron: "0 6 * * *" }] }
+#   jobs: { scan: { runs-on: ubuntu-latest, steps: [{ uses: <you>/<this-repo>/github-action@main, with: { token: "${{ secrets.GHOSTACTION_TOKEN }}" } }] } }
+name: GhostAction IoC scan
+description: Scan a user/org's GitHub repos for GhostAction injected workflows, their runs, malicious commits and C2 references.
+inputs:
+  token: { description: "PAT with repo + actions:read (+ read:org); GITHUB_TOKEN only sees this repo", required: true }
+  owner: { description: "User or org to scan", default: "${{ github.repository_owner }}" }
+  repos: { description: "Optional space-separated owner/repo list instead of all repos", default: "" }
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: bash "$GITHUB_ACTION_PATH/scan.sh"
+      env: { GH_TOKEN: "${{ inputs.token }}", OWNER: "${{ inputs.owner }}", REPOS: "${{ inputs.repos }}" }

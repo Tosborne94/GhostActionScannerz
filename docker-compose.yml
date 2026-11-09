@@ -1,0 +1,5 @@
+services:
+  scan:
+    build: .
+    volumes: ["${SCAN_DIR:-.}:/scan:ro"]
+    command: ${SCAN_ARGS:-/scan}
